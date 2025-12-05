@@ -46,6 +46,9 @@ def fetch_fonts():
         json.dump(data, f, indent=2, ensure_ascii=False)
     
     print(f"Saved {len(data.get('items', []))} fonts to {output_file}")
+    
+    from app.optimize import optimize_fonts
+    optimize_fonts(str(output_file))
 
 
 if __name__ == '__main__':

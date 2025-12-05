@@ -1,6 +1,11 @@
+import os
 import json
 from pathlib import Path
 from datetime import datetime
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 def get_output_dir(date_str=None):
@@ -17,7 +22,15 @@ def load_fonts(input_file=None, date_str=None):
     if input_file is None:
         output_dir = get_output_dir(date_str)
         input_file = output_dir / 'raw_fonts.json'
-    with open(input_file, 'r', encoding='utf-8') as f:
+    
+    input_path = Path(input_file)
+    if not input_path.exists():
+        raise FileNotFoundError(
+            f"File not found: {input_path}\n"
+            f"Please run 'python main.py fetch' first to download fonts data."
+        )
+    
+    with open(input_path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
 
@@ -63,8 +76,25 @@ def filter_vietnamese(data):
     }
 
 
+def optimize_data(data):
+    """Remove unnecessary keys from data."""
+    optimized = json.loads(json.dumps(data))
+    
+    is_ignore_files = os.getenv('IS_IGNORE_FILES', '0') == '1'
+    items = optimized.get('items', [])
+    for item in items:
+        item.pop('version', None)
+        item.pop('lastModified', None)
+        item.pop('menu', None)
+        item.pop('kind', None)
+        if is_ignore_files:
+            item.pop('files', None)
+    
+    return optimized
+
+
 def save_fonts(data, output_file, output_dir=None):
-    """Save fonts data to JSON file."""
+    """Save fonts data to both raw and optimized JSON files."""
     if output_dir is None:
         output_dir = get_output_dir()
     
@@ -74,9 +104,18 @@ def save_fonts(data, output_file, output_dir=None):
         json.dump(data, f, indent=2, ensure_ascii=False)
     
     print(f"Saved {data.get('count', 0)} fonts to {output_path}")
+    
+    optimized_data = optimize_data(data)
+    optimized_file = output_path.stem + '.optimize.json'
+    optimized_path = output_dir / optimized_file
+    
+    with open(optimized_path, 'w', encoding='utf-8') as f:
+        json.dump(optimized_data, f, indent=2, ensure_ascii=False)
+    
+    print(f"Saved optimized {optimized_data.get('count', 0)} fonts to {optimized_path}")
 
 
-def main(input_file=None, top_n=20, date_str=None):
+def main(input_file=None, top_n=20, date_str=None, include_vietnamese=False):
     """
     Process fonts data: extract top N and Vietnamese fonts.
     
@@ -84,6 +123,7 @@ def main(input_file=None, top_n=20, date_str=None):
         input_file: Path to raw fonts JSON file (default: output/yyyy-mm-dd/raw_fonts.json)
         top_n: Number of top fonts to extract (default 20)
         date_str: Date folder in yyyy-mm-dd format (default: today's date)
+        include_vietnamese: Whether to create vietnamese_fonts.json file (default: False)
     """
     data = load_fonts(input_file, date_str)
     output_dir = get_output_dir(date_str)
@@ -91,8 +131,9 @@ def main(input_file=None, top_n=20, date_str=None):
     top_n_data = filter_top_n(data, n=top_n)
     save_fonts(top_n_data, f'top_{top_n}_fonts.json', output_dir)
     
-    vietnamese_data = filter_vietnamese(data)
-    save_fonts(vietnamese_data, 'vietnamese_fonts.json', output_dir)
+    if include_vietnamese:
+        vietnamese_data = filter_vietnamese(data)
+        save_fonts(vietnamese_data, 'vietnamese_fonts.json', output_dir)
 
 
 if __name__ == '__main__':
