@@ -248,6 +248,47 @@ python main.py filter --top-n 50 --date 2025-12-05
 
 Check the `output/2025-12-05/` directory (today's date) for results.
 
+## Format Code
+
+### Setup Python Formatter
+
+Install **Black** (optional but recommended for code formatting):
+
+```bash
+pip install black
+```
+
+### Format Code Files
+
+Format all Python files in the project:
+
+```bash
+black .
+```
+
+Format a specific file:
+
+```bash
+black app/fetch_data.py
+```
+
+Format with specific line length:
+
+```bash
+black --line-length 100 .
+```
+
+### Code Style Guidelines
+
+- **Line Length**: Maximum 88 characters (Black default) or 100 characters
+- **Indentation**: 4 spaces (Python standard)
+- **Naming Conventions**:
+  - Functions and variables: `snake_case`
+  - Classes: `PascalCase`
+  - Constants: `UPPER_SNAKE_CASE`
+- **Imports**: Group by standard library, third-party, and local imports
+- **Docstrings**: Use triple quotes for all modules, functions, and classes
+
 ## Requirements
 
 See `requirements.txt` for all dependencies:
