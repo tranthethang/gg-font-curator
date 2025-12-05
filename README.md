@@ -1,3 +1,5 @@
+![HireBot AI API](./assets/repo.png)
+
 # GG Font Curator
 
 A collection of Python scripts to interact with the Google Fonts API, enabling easy listing, sorting, and fetching of font metadata (trending, popular, etc.)
