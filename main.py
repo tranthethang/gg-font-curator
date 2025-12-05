@@ -1,4 +1,5 @@
 import click
+
 from app.fetch_data import fetch_fonts
 from app.filter_curate import main as filter_main
 
@@ -16,9 +17,15 @@ def fetch():
 
 
 @cli.command()
-@click.option('--input-file', default=None, help='Path to raw fonts JSON file')
-@click.option('--top-n', default=20, type=int, help='Number of top fonts to extract (default 20)')
-@click.option('--date', default=None, help='Date folder in yyyy-mm-dd format (default: today\'s date)')
+@click.option("--input-file", default=None, help="Path to raw fonts JSON file")
+@click.option(
+    "--top-n", default=20, type=int, help="Number of top fonts to extract (default 20)"
+)
+@click.option(
+    "--date",
+    default=None,
+    help="Date folder in yyyy-mm-dd format (default: today's date)",
+)
 def filter(input_file, top_n, date):
     """Filter and curate fonts data."""
     try:
@@ -28,5 +35,5 @@ def filter(input_file, top_n, date):
         raise SystemExit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

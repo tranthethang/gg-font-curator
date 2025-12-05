@@ -1,0 +1,31 @@
+[tool.black]
+line-length = 88
+target-version = ["py39", "py310", "py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | __pycache__
+  | \.pytest_cache
+  | output
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip_gitignore = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    ".pytest_cache",
+    "output",
+]
