@@ -2,6 +2,7 @@ import click
 
 from app.fetch_data import fetch_fonts
 from app.filter_curate import main as filter_main
+from app.transform_fonts import transform_optimize_json
 
 
 @click.group()
@@ -31,6 +32,17 @@ def filter(input_file, top_n, date):
     try:
         filter_main(input_file=input_file, top_n=top_n, date_str=date)
     except FileNotFoundError as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
+
+
+@cli.command()
+@click.option("--input-file", required=True, help="Path to .optimize.json file")
+def transform(input_file):
+    """Transform .optimize.json to family-based format."""
+    try:
+        transform_optimize_json(input_file)
+    except (FileNotFoundError, ValueError) as e:
         click.echo(f"Error: {e}", err=True)
         raise SystemExit(1)
 
